@@ -2,3 +2,6 @@
 ._*
 .ssh
 *.backup
+*.tfplan
+*.tfstate
+*.tfstate.*
