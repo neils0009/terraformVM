@@ -38,13 +38,13 @@ resource "azurerm_network_security_group" "my_terraform_nsg" {
   resource_group_name = azurerm_resource_group.rg.name
 
   security_rule {
-    name                       = "SSH"
+    name                       = "RDP"
     priority                   = 1001
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "22"
+    destination_port_range     = "3389"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
@@ -90,7 +90,7 @@ resource "azurerm_storage_account" "my_storage_account" {
 }
 
 # Create virtual machine
-resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
+resource "azurerm_windows_virtual_machine" "my_terraform_vm" {
   name                  = "myTfVM"
   location              = azurerm_resource_group.rg.location
   resource_group_name   = azurerm_resource_group.rg.name
@@ -104,19 +104,15 @@ resource "azurerm_linux_virtual_machine" "my_terraform_vm" {
   }
 
   source_image_reference {
-    publisher = "Canonical"
-    offer     = "ubuntu-24_04-lts"
-    sku       = "server"
+    publisher = "microsoftvisualstudio"
+    offer     = "visualstudioplustools"
+    sku       = "vs-2022-comm-general-win11-m365-gen2"
     version   = "latest"
   }
 
-  computer_name  = "myTfVm1"
+  computer_name  = "middleEarthVM1"
   admin_username = var.username
-
-  admin_ssh_key {
-    username   = var.username
-    public_key = azapi_resource_action.ssh_public_key_gen.output.publicKey
-  }
+  admin_password = var.password
 
   boot_diagnostics {
     storage_account_uri = azurerm_storage_account.my_storage_account.primary_blob_endpoint
